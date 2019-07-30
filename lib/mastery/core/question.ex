@@ -22,13 +22,13 @@ defmodule Mastery.Core.Question do
 
   defp evaluate(substitutions, template) do
     %__MODULE__{
-    asked: compile(template, substitutions),
-    substitutions: substitutions,
-    template: template
+      asked: compile(template, substitutions),
+      substitutions: substitutions,
+      template: template
     }
   end
 
-  def new(%Template{ } = template) do
+  def new(%Template{} = template) do
     template.generators
     |> Enum.map(&build_substitution/1)
     |> evaluate(template)

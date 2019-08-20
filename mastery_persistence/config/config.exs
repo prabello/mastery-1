@@ -6,6 +6,7 @@ config :mastery_persistence,
   ecto_repos: [MasteryPersistence.Repo]
 
 config :logger, level: :info
+import_config "#{Mix.env()}.exs"
 
 # This configuration is loaded before any dependency and is restricted
 # to this project. If another project depends on this project, this
@@ -15,11 +16,11 @@ config :logger, level: :info
 
 # You can configure your application as:
 #
-#     config :mastery, key: :value
+#     config :mastery_persistence, key: :value
 #
 # and access this configuration in your application as:
 #
-#     Application.get_env(:mastery, :key)
+#     Application.get_env(:mastery_persistence, :key)
 #
 # You can also configure a third-party app:
 #

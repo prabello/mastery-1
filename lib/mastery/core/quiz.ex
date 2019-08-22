@@ -84,6 +84,7 @@ defmodule Mastery.Core.Quiz do
   defp add_template_to_field(quiz, field) do
     template = template(quiz)
     list = Map.get(quiz, field)
+
     Map.put(quiz, field, [template | list])
   end
 

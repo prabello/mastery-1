@@ -8,20 +8,32 @@ defmodule Mastery do
   def build_quiz(fields) do
     with :ok <- QuizValidator.errors(fields),
          :ok <- QuizManager.build_quiz(fields),
-         do: :ok,
-         else: (error -> error)
+    do: :ok, else: (error -> error)
   end
 
   def add_template(title, fields) do
     with :ok <- TemplateValidator.errors(fields),
          :ok <- QuizManager.add_template(title, fields),
-         do: :ok,
-         else: (error -> error)
+    do: :ok, else: (error -> error)
+  end
+
+  def schedule_quiz(quiz, templates, start_at, end_at, notify_pid \\ nil) do
+    with :ok <- QuizValidator.errors(quiz),
+         true <- Enum.all?(templates, &(:ok == TemplateValidator.errors(&1))),
+         :ok <-
+           Proctor.schedule_quiz(
+             quiz,
+             templates,
+             start_at,
+             end_at,
+             notify_pid),
+    do: :ok, else: (error -> error)
   end
 
   def take_quiz(title, email) do
-    with %Quiz{} = quiz <- QuizManager.lookup_quiz_by_title(title),
-         {:ok, _} <- QuizSession.take_quiz(quiz, email) do
+    with %Quiz{}=quiz <- QuizManager.lookup_quiz_by_title(title),
+         {:ok, _} <- QuizSession.take_quiz(quiz, email)
+    do
       {title, email}
     else
       error -> error
@@ -33,14 +45,6 @@ defmodule Mastery do
   end
 
   def answer_question(name, answer, persistence_fn \\ @persistence_fn) do
-    QuizSession.answer_question(name, answer, persistence_fn)
-  end
-
-  def schedule_quiz(quiz, templates, start_at, end_at) do
-    with :ok <- QuizValidator.errors(quiz),
-         true <- Enum.all?(templates, &(:ok == TemplateValidator.errors(&1))),
-         :ok <- Proctor.schedule_quiz(quiz, templates, start_at, end_at),
-         do: :ok,
-         else: (error -> error)
+    QuizSession.answer_question(name,  answer, persistence_fn)
   end
 end

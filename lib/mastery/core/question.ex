@@ -1,6 +1,13 @@
 defmodule Mastery.Core.Question do
   alias Mastery.Core.Template
+
   defstruct ~w[asked substitutions template]a
+
+  def new(%Template{} = template) do
+    template.generators
+    |> Enum.map(&build_substitution/1)
+    |> evaluate(template)
+  end
 
   defp build_substitution({name, choices_or_generator}) do
     {name, choose(choices_or_generator)}
@@ -26,11 +33,5 @@ defmodule Mastery.Core.Question do
       substitutions: substitutions,
       template: template
     }
-  end
-
-  def new(%Template{} = template) do
-    template.generators
-    |> Enum.map(&build_substitution/1)
-    |> evaluate(template)
   end
 end
